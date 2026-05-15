@@ -18,7 +18,7 @@ public class Noticia extends Publicacion {
 
 	}
 
-	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor, String categoria,
+	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor, String categoria,
 			String fuente, String imagenUrl) {
 		super(titulo, contenido, fechaPublicacion, autor);
 		this.categoria = categoria;
@@ -26,11 +26,11 @@ public class Noticia extends Publicacion {
 		this.imagenUrl = imagenUrl;
 	}
 
-	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
+	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor) {
 		super(titulo, contenido, fechaPublicacion, autor);
 	}
 
-	public Noticia(String titulo, String contenido, Usuario autor, String categoria, String fuente) {
+	public Noticia(String titulo, String contenido, String autor, String categoria, String fuente) {
 		super(titulo, contenido, LocalDateTime.now(), autor);
 		this.categoria = categoria;
 		this.fuente = fuente;

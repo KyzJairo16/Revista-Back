@@ -18,7 +18,7 @@ public class OpenApiConfig {
 
 	@Bean
 	public OpenAPI customOpenAPI() {
-		// 1. Descripción principal personalizada para tu Revista
+		
 		String mainDescription = "<h2>Guía de la API - Revista Digital Unbosque</h2>"
 				+ "<p>Esta API gestiona el flujo de publicaciones (Noticias y Horóscopos), Comentarios y Usuarios.</p>"
 				+ "<h3>Permisos por Rol:</h3>" + "<ul>"
@@ -29,24 +29,24 @@ public class OpenApiConfig {
 				+ "<h3>Autenticación JWT:</h3>"
 				+ "<p>Usa el botón <strong>Authorize</strong> arriba a la derecha después de obtener tu token en el login.</p>";
 
-		// 2. Descripción detallada de los pasos de seguridad
+		
 		String securityDescription = "Autenticación Bearer mediante JWT." + "<p>Pasos para probar los endpoints:</p>"
 				+ "<ol>" + "  <li>Haz login en el controlador de Auth para recibir tu token.</li>"
 				+ "  <li>Copia el valor del token.</li>"
 				+ "  <li>Presiona el botón <strong>Authorize</strong> (el candado).</li>"
 				+ "  <li>Escribe exactamente: <code>Bearer TU_TOKEN_AQUI</code></li>" + "</ol>";
 
-		// 3. Configuración de Información General
+		
 		Info info = new Info().title("API Revista Digital - JAIRO ESTEBAN - NATALIA DIAZ").version("1.0").description(mainDescription)
 				.contact(new Contact().name("Equipo de Desarrollo Revista").email("jairo.esteban@unbosque.edu.co"))
 				.license(new License().name("Licencia MIT").url("https://opensource.org/licenses/MIT"));
 
-		// 4. Esquema de Seguridad JWT
+		
 		SecurityScheme securityScheme = new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer")
 				.bearerFormat("JWT").description(securityDescription);
 
 		return new OpenAPI().info(info).components(new Components().addSecuritySchemes("bearerAuth", securityScheme)
-				// Respuestas de error reutilizables
+				
 				.addResponses("UnauthorizedError", new ApiResponse().description("No autenticado - Token inválido")
 						.content(new Content().addMediaType("application/json",
 								new MediaType().addExamples("error", new Example().value(

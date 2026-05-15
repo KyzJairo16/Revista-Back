@@ -14,18 +14,18 @@ public class HoroscopoDTO extends Publicacion {
 	public HoroscopoDTO() {
 	}
 	
-	public HoroscopoDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor,
+	public HoroscopoDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor,
 			String signoZodiacal, String prediccion) {
 		super(titulo, contenido, fechaPublicacion, autor);
 		this.signoZodiacal = signoZodiacal;
 		this.prediccion = prediccion;
 	}
 
-	public HoroscopoDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
+	public HoroscopoDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor) {
 		super(titulo, contenido, fechaPublicacion, autor);
 	}
 
-	public HoroscopoDTO(String titulo, String contenido, Usuario autor, String signoZodiacal, String prediccion) {
+	public HoroscopoDTO(String titulo, String contenido, String autor, String signoZodiacal, String prediccion) {
 		super(titulo, contenido, LocalDateTime.now(), autor);
 		this.signoZodiacal = signoZodiacal;
 		this.prediccion = prediccion;

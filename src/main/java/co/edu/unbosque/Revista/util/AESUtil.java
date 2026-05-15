@@ -176,23 +176,5 @@ public class AESUtil {
 		return DigestUtils.sha512Hex(content);
 	}
 
-	public static void main(String[] args) {
-		String texto = "Natalia tiene muchos nobios";
-		System.out.println(texto);
-
-		String codificado = encrypt(texto);
-		System.out.println(codificado);
-
-		String decodificado = decrypt(codificado);
-		System.out.println(decodificado);
-		
-		String contrasena = "David2008@2026";
-
-		System.out.println(hashingToMD5(contrasena));
-		System.out.println(hashingToSHA1(contrasena));
-		System.out.println(hashingToSHA256(contrasena));
-		System.out.println(hashingToSHA384(contrasena));
-		System.out.println(hashingToSHA512(contrasena));
-	}
 
 }

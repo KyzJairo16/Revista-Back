@@ -1,31 +1,31 @@
 package co.edu.unbosque.Revista.entity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
+import java.util.Objects;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Inheritance;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "publicacion")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Publicacion {
-	
+
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
 	private String titulo;
 	private String contenido;
 	private LocalDateTime fechaPublicacion;
-	
-	@ManyToOne
-	private Usuario autor;
-	
+	private String autor;
+
 	public Publicacion() {
 	}
-	
-	public Publicacion(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
+
+	public Publicacion(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor) {
 		super();
 		this.titulo = titulo;
 		this.contenido = contenido;
@@ -65,18 +65,12 @@ public abstract class Publicacion {
 		this.fechaPublicacion = fechaPublicacion;
 	}
 
-	public Usuario getAutor() {
+	public String getAutor() {
 		return autor;
 	}
 
-	public void setAutor(Usuario autor) {
+	public void setAutor(String autor) {
 		this.autor = autor;
-	}
-
-	@Override
-	public String toString() {
-		return "Publicacion [id=" + id + ", titulo=" + titulo + ", contenido=" + contenido + ", fechaPublicacion="
-				+ fechaPublicacion + ", autor=" + autor + "]";
 	}
 
 	@Override
@@ -97,7 +91,11 @@ public abstract class Publicacion {
 				&& Objects.equals(fechaPublicacion, other.fechaPublicacion) && id == other.id
 				&& Objects.equals(titulo, other.titulo);
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Publicacion [id=" + id + ", titulo=" + titulo + ", contenido=" + contenido + ", fechaPublicacion="
+				+ fechaPublicacion + ", autor=" + autor + "]";
+	}
 
 }
