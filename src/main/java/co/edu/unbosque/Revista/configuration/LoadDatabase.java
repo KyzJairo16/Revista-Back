@@ -21,7 +21,7 @@ public class LoadDatabase {
 	CommandLineRunner initDatabase(UsuarioRepository usuarioRepo, PasswordEncoder passwordEncoder) {
 
 		return args -> {
-			// 1. Crear el EDITOR (Administrador de la revista)
+			
 			Optional<Usuario> foundAdmin = usuarioRepo.findByUsername("admin");
 			if (foundAdmin.isPresent()) {
 				log.info("El EDITOR 'admin' ya existe, omitiendo...");
@@ -29,12 +29,12 @@ public class LoadDatabase {
 				Usuario admin = new Usuario();
 				admin.setUsername("admin");
 				admin.setPassword(passwordEncoder.encode("admin123"));
-				admin.setRol(Rol.EDITOR); // Usamos tus roles definidos
+				admin.setRol(Rol.EDITOR); 
 				usuarioRepo.save(admin);
 				log.info(">>> Precargando usuario EDITOR: admin / admin123");
 			}
 
-			// 2. Crear un USUARIO (Lector normal)
+	
 			Optional<Usuario> foundUser = usuarioRepo.findByUsername("jairo");
 			if (foundUser.isPresent()) {
 				log.info("El USUARIO 'jairo' ya existe, omitiendo...");
@@ -47,7 +47,6 @@ public class LoadDatabase {
 				log.info(">>> Precargando usuario LECTOR: jairo / jairo123");
 			}
 
-			// 3. Crear un COMENTADOR (Opcional)
 			if (usuarioRepo.findByUsername("comentador").isEmpty()) {
 				Usuario comentador = new Usuario();
 				comentador.setUsername("comentador");

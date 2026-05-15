@@ -9,21 +9,22 @@ public class ComentarioDTO {
 
 	private Long id;
 	private String contenido;
-	private Usuario autor;
-	private Publicacion publicacion;
+	private String autor;
+	private Long publicacionId;
 	
 	public ComentarioDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ComentarioDTO(Long id, String contenido, Usuario autor, Publicacion publicacion) {
+	public ComentarioDTO(String contenido, String autor, Long publicacionId) {
 		super();
-		this.id = id;
 		this.contenido = contenido;
 		this.autor = autor;
-		this.publicacion = publicacion;
+		this.publicacionId = publicacionId;
 	}
 
+
+	
 	public Long getId() {
 		return id;
 	}
@@ -40,25 +41,27 @@ public class ComentarioDTO {
 		this.contenido = contenido;
 	}
 
-	public Usuario getAutor() {
+	public String getAutor() {
 		return autor;
 	}
 
-	public void setAutor(Usuario autor) {
+	public void setAutor(String autor) {
 		this.autor = autor;
 	}
 
-	public Publicacion getPublicacion() {
-		return publicacion;
+	public Long getPublicacionId() {
+		return publicacionId;
 	}
 
-	public void setPublicacion(Publicacion publicacion) {
-		this.publicacion = publicacion;
+	public void setPublicacionId(Long publicacionId) {
+		this.publicacionId = publicacionId;
 	}
+
+	
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(autor, contenido, id, publicacion);
+		return Objects.hash(autor, contenido, id, publicacionId);
 	}
 
 	@Override
@@ -71,13 +74,14 @@ public class ComentarioDTO {
 			return false;
 		ComentarioDTO other = (ComentarioDTO) obj;
 		return Objects.equals(autor, other.autor) && Objects.equals(contenido, other.contenido)
-				&& Objects.equals(id, other.id) && Objects.equals(publicacion, other.publicacion);
+				&& Objects.equals(id, other.id) && Objects.equals(publicacionId, other.publicacionId);
 	}
 
 	@Override
 	public String toString() {
-		return "ComentarioDTO [id=" + id + ", contenido=" + contenido + ", autor=" + autor + ", publicacion="
-				+ publicacion + "]";
+		return "ComentarioDTO [id=" + id + ", contenido=" + contenido + ", autor=" + autor + ", publicacionId="
+				+ publicacionId + "]";
 	}
-	
+
+
 }

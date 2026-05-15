@@ -97,7 +97,7 @@ public class ComentarioService implements CRUDOperation<ComentarioDTO> {
 	}
 
 	public List<ComentarioDTO> getByAutor(String username) {
-		List<Comentario> entityList= comentarioRepo.findByAutorUsername(username);
+		List<Comentario> entityList= comentarioRepo.findByAutor(username);
 		List<ComentarioDTO> dtoList = new ArrayList<>();
 
 		for (Comentario comentario : entityList) {

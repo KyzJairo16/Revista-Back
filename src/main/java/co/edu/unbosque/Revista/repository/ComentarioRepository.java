@@ -10,6 +10,6 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
 	
 	public List<Comentario> findByPublicacionId(Long publicacionId);
 	
-	public List<Comentario> findByAutorUsername(String username);
+	public List<Comentario> findByAutor(String autor);
 
 }

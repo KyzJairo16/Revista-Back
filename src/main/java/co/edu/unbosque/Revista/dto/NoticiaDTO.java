@@ -16,7 +16,7 @@ public class NoticiaDTO extends Publicacion {
 		// TODO Auto-generated constructor stub
 	}
 
-	public NoticiaDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor, String categoria,
+	public NoticiaDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor, String categoria,
 			String fuente, String imagenUrl) {
 		super(titulo, contenido, fechaPublicacion, autor);
 		this.categoria = categoria;
@@ -24,11 +24,11 @@ public class NoticiaDTO extends Publicacion {
 		this.imagenUrl = imagenUrl;
 	}
 
-	public NoticiaDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
+	public NoticiaDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor) {
 		super(titulo, contenido, fechaPublicacion, autor);
 	}
 
-	public NoticiaDTO(String titulo, String contenido, Usuario autor, String categoria, String fuente) {
+	public NoticiaDTO(String titulo, String contenido, String autor, String categoria, String fuente) {
 		super(titulo, contenido, LocalDateTime.now(), autor);
 		this.categoria = categoria;
 		this.fuente = fuente;

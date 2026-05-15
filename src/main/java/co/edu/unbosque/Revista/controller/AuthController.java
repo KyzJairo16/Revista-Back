@@ -106,8 +106,10 @@ public class AuthController {
 			return token;
 		}
 
-		public String getRole() {
+		public String getRol() {
 			return rol;
 		}
+
+		
 	}
 }

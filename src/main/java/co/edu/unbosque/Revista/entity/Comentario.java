@@ -20,75 +20,79 @@ public class Comentario {
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
 	private String contenido;
 	private LocalDateTime fecha;
-
-	@ManyToOne
-	private Usuario autor;
-	
-	@ManyToOne
-	private Publicacion publicacion;
+	private String autor;
+	private Long publicacionId;
 	
 	public Comentario() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Comentario(String contenido, LocalDateTime fecha, Usuario autor, Publicacion publicacion) {
+
+	public Comentario(String contenido, LocalDateTime fecha, String autor, Long publicacionId) {
 		super();
 		this.contenido = contenido;
 		this.fecha = fecha;
 		this.autor = autor;
-		this.publicacion = publicacion;
+		this.publicacionId = publicacionId;
 	}
+
+
 
 	public long getId() {
 		return id;
 	}
 
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 
 	public String getContenido() {
 		return contenido;
 	}
 
+
 	public void setContenido(String contenido) {
 		this.contenido = contenido;
 	}
+
 
 	public LocalDateTime getFecha() {
 		return fecha;
 	}
 
+
 	public void setFecha(LocalDateTime fecha) {
 		this.fecha = fecha;
 	}
 
-	public Usuario getAutor() {
+
+	public String getAutor() {
 		return autor;
 	}
 
-	public void setAutor(Usuario autor) {
+
+	public void setAutor(String autor) {
 		this.autor = autor;
 	}
 
-	public Publicacion getPublicacion() {
-		return publicacion;
+
+	public Long getPublicacionId() {
+		return publicacionId;
 	}
 
-	public void setPublicacion(Publicacion publicacion) {
-		this.publicacion = publicacion;
+
+	public void setPublicacionId(Long publicacionId) {
+		this.publicacionId = publicacionId;
 	}
 
-	@Override
-	public String toString() {
-		return "Comentario [id=" + id + ", contenido=" + contenido + ", fecha=" + fecha + ", autor=" + autor
-				+ ", publicacion=" + publicacion + "]";
-	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(autor, contenido, fecha, id, publicacion);
+		return Objects.hash(autor, contenido, fecha, id, publicacionId);
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -101,9 +105,14 @@ public class Comentario {
 		Comentario other = (Comentario) obj;
 		return Objects.equals(autor, other.autor) && Objects.equals(contenido, other.contenido)
 				&& Objects.equals(fecha, other.fecha) && id == other.id
-				&& Objects.equals(publicacion, other.publicacion);
+				&& Objects.equals(publicacionId, other.publicacionId);
 	}
-	
-	
-	
+
+
+	@Override
+	public String toString() {
+		return "Comentario [id=" + id + ", contenido=" + contenido + ", fecha=" + fecha + ", autor=" + autor
+				+ ", publicacionId=" + publicacionId + "]";
+	}
+
 }
