@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -23,6 +21,9 @@ public abstract class Publicacion {
 	
 	@ManyToOne
 	private Usuario autor;
+	
+	public Publicacion() {
+	}
 	
 	public Publicacion(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
 		super();

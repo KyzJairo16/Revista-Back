@@ -1,33 +1,31 @@
-package co.edu.unbosque.Revista.entity;
+package co.edu.unbosque.Revista.dto;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import co.edu.unbosque.Revista.entity.Publicacion;
+import co.edu.unbosque.Revista.entity.Usuario;
 
-@Entity
-@Table(name = "horoscopo")
-public class Horoscopo extends Publicacion {
-
+public class HoroscopoDTO extends Publicacion {
+	
 	private String signoZodiacal;
 	private String prediccion;
-
-	public Horoscopo() {
+	
+	public HoroscopoDTO() {
 	}
-
-	public Horoscopo(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor,
+	
+	public HoroscopoDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor,
 			String signoZodiacal, String prediccion) {
 		super(titulo, contenido, fechaPublicacion, autor);
 		this.signoZodiacal = signoZodiacal;
 		this.prediccion = prediccion;
 	}
 
-	public Horoscopo(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
+	public HoroscopoDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
 		super(titulo, contenido, fechaPublicacion, autor);
 	}
 
-	public Horoscopo(String titulo, String contenido, Usuario autor, String signoZodiacal, String prediccion) {
+	public HoroscopoDTO(String titulo, String contenido, Usuario autor, String signoZodiacal, String prediccion) {
 		super(titulo, contenido, LocalDateTime.now(), autor);
 		this.signoZodiacal = signoZodiacal;
 		this.prediccion = prediccion;
@@ -50,11 +48,6 @@ public class Horoscopo extends Publicacion {
 	}
 
 	@Override
-	public String toString() {
-		return "Horoscopo [signoZodiacal=" + signoZodiacal + ", prediccion=" + prediccion + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -72,8 +65,14 @@ public class Horoscopo extends Publicacion {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Horoscopo other = (Horoscopo) obj;
+		HoroscopoDTO other = (HoroscopoDTO) obj;
 		return Objects.equals(prediccion, other.prediccion) && Objects.equals(signoZodiacal, other.signoZodiacal);
 	}
+
+	@Override
+	public String toString() {
+		return "HoroscopoDTO [signoZodiacal=" + signoZodiacal + ", prediccion=" + prediccion + "]";
+	}
+	
 
 }

@@ -1,24 +1,22 @@
-package co.edu.unbosque.Revista.entity;
+package co.edu.unbosque.Revista.dto;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import co.edu.unbosque.Revista.entity.Publicacion;
+import co.edu.unbosque.Revista.entity.Usuario;
 
-@Entity
-@Table(name = "noticia")
-public class Noticia extends Publicacion {
+public class NoticiaDTO extends Publicacion {
 
 	private String categoria;
 	private String fuente;
 	private String imagenUrl;
 
-	public Noticia() {
-
+	public NoticiaDTO() {
+		// TODO Auto-generated constructor stub
 	}
 
-	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor, String categoria,
+	public NoticiaDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor, String categoria,
 			String fuente, String imagenUrl) {
 		super(titulo, contenido, fechaPublicacion, autor);
 		this.categoria = categoria;
@@ -26,11 +24,11 @@ public class Noticia extends Publicacion {
 		this.imagenUrl = imagenUrl;
 	}
 
-	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
+	public NoticiaDTO(String titulo, String contenido, LocalDateTime fechaPublicacion, Usuario autor) {
 		super(titulo, contenido, fechaPublicacion, autor);
 	}
 
-	public Noticia(String titulo, String contenido, Usuario autor, String categoria, String fuente) {
+	public NoticiaDTO(String titulo, String contenido, Usuario autor, String categoria, String fuente) {
 		super(titulo, contenido, LocalDateTime.now(), autor);
 		this.categoria = categoria;
 		this.fuente = fuente;
@@ -61,11 +59,6 @@ public class Noticia extends Publicacion {
 	}
 
 	@Override
-	public String toString() {
-		return "Noticia [categoria=" + categoria + ", fuente=" + fuente + ", imagenUrl=" + imagenUrl + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -83,9 +76,14 @@ public class Noticia extends Publicacion {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Noticia other = (Noticia) obj;
+		NoticiaDTO other = (NoticiaDTO) obj;
 		return Objects.equals(categoria, other.categoria) && Objects.equals(fuente, other.fuente)
 				&& Objects.equals(imagenUrl, other.imagenUrl);
+	}
+
+	@Override
+	public String toString() {
+		return "NoticiaDTO [categoria=" + categoria + ", fuente=" + fuente + ", imagenUrl=" + imagenUrl + "]";
 	}
 
 }
