@@ -46,15 +46,12 @@ public class HoroscopoService implements CRUDOperation<HoroscopoDTO> {
 
 	@Override
 	public List<HoroscopoDTO> getAll() {
-		List<Horoscopo> entityList = horoscopoRepo.findAll();
+		List<Horoscopo> entityList = (List<Horoscopo>)horoscopoRepo.findAll();
 		List<HoroscopoDTO> dtoList = new ArrayList<>();
 
-		entityList.forEach((entity) -> {
-			HoroscopoDTO dto = modelMapper.map(entityList, HoroscopoDTO.class);
-			dtoList.add(dto);
-		}
-
-		);
+		entityList.forEach(entity -> 
+			dtoList.add(modelMapper.map(entity, HoroscopoDTO.class)));
+		
 		return dtoList;
 	}
 

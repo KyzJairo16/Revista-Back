@@ -15,7 +15,7 @@ public class Noticia extends Publicacion {
 	private String imagenUrl;
 
 	public Noticia() {
-
+      super();
 	}
 
 	public Noticia(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor, String categoria,

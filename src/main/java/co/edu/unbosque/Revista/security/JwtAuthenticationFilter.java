@@ -5,7 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -66,9 +69,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// Valida matemáticamente que el token no esté expirado y corresponda al usuario
 			if (jwtUtil.validateToken(jwt, userDetails)) {
 
+			
+				String roleFromToken = jwtUtil.extractRole(jwt);
+				List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + roleFromToken));
+				
 				// Crea el objeto de autenticación que Spring Security entiende
 				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
+						userDetails, null, authorities);
 
 				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
