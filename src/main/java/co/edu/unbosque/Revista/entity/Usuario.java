@@ -62,7 +62,7 @@ public class Usuario implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
+		return List.of(new SimpleGrantedAuthority("ROLE_" + this.rol.name()));
 	}
 	
 	@Override
@@ -84,7 +84,6 @@ public class Usuario implements UserDetails {
 	public boolean isEnabled() {
 		return cuentaHabilitada;
 	}
-
 
 	public long getId() {
 		return id;

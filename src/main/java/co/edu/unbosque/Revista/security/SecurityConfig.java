@@ -1,13 +1,13 @@
 package co.edu.unbosque.Revista.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,41 +19,52 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-	@Autowired
+	
 	private final JwtAuthenticationFilter jwtAuthFilter;
 
-	@Autowired
-	private final UserDetailsService userDetailsService;
+	
+	private final UserDetailsService userDetailsService; 
 
 	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
-		this.jwtAuthFilter = jwtAuthFilter;
-		this.userDetailsService = userDetailsService;
-	}
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsService = userDetailsService;
+    }
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-				.requestMatchers("/usuario/getall", "/usuario/count", "/usuario/exists/**", "/usuario/getbyid/**")
-				.hasAnyRole("USUARIO", "ADMIN").requestMatchers("/usuario/**").hasRole("ADMIN").anyRequest()
-				.authenticated())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+		http.csrf(csrf -> csrf.disable())
+			.authorizeHttpRequests(auth -> auth
+				
+				.requestMatchers("/api/auth/**").permitAll()
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				
+				
+				.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**", "/api/usuarios/buscar/**")
+				.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+				.requestMatchers("/api/usuarios/**").hasRole("EDITOR")
+				
+				
+				.anyRequest().authenticated()
+			)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authenticationProvider(authenticationProvider())
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
 
-	 @Bean
+	  @Bean
 	  public AuthenticationProvider authenticationProvider() {
-	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+	    authProvider.setUserDetailsService(userDetailsService);
 	    authProvider.setPasswordEncoder(passwordEncoder());
 	    return authProvider;
+	   
 	  }
-
-
+	  
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();

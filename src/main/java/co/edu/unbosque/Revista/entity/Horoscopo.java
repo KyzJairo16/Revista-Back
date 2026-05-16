@@ -14,6 +14,7 @@ public class Horoscopo extends Publicacion {
 	private String prediccion;
 
 	public Horoscopo() {
+		super();
 	}
 
 	public Horoscopo(String titulo, String contenido, LocalDateTime fechaPublicacion, String autor,

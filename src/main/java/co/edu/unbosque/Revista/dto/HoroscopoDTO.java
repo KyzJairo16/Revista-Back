@@ -6,7 +6,7 @@ import java.util.Objects;
 import co.edu.unbosque.Revista.entity.Publicacion;
 import co.edu.unbosque.Revista.entity.Usuario;
 
-public class HoroscopoDTO extends Publicacion {
+public class HoroscopoDTO extends Publicacion{
 	
 	private String signoZodiacal;
 	private String prediccion;
@@ -31,6 +31,7 @@ public class HoroscopoDTO extends Publicacion {
 		this.prediccion = prediccion;
 	}
 
+	
 	public String getSignoZodiacal() {
 		return signoZodiacal;
 	}
@@ -73,6 +74,8 @@ public class HoroscopoDTO extends Publicacion {
 	public String toString() {
 		return "HoroscopoDTO [signoZodiacal=" + signoZodiacal + ", prediccion=" + prediccion + "]";
 	}
+
+	
 	
 
 }
