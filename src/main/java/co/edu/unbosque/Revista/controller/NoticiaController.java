@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200" })
 @Transactional
 @Tag(name = "Gestión de Noticias", description = "Endpoints para administrar las noticias de la Revista digital")
-@SecurityRequirement(name = "bearerAuth") 
+@SecurityRequirement(name = "bearerAuth")
 public class NoticiaController {
 
 	@Autowired
@@ -71,10 +71,7 @@ public class NoticiaController {
 	@GetMapping("/buscar/{id}")
 	public ResponseEntity<NoticiaDTO> buscarPorId(@PathVariable Long id) {
 		NoticiaDTO found = noticiaServ.getById(id);
-		if (found != null) {
-			return new ResponseEntity<>(found, HttpStatus.OK);
-		}
-		return new ResponseEntity<>(new NoticiaDTO(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(found, HttpStatus.OK);
 	}
 
 	@Operation(summary = "Actualizar noticia", description = "Actualiza los campos de una noticia existente (Título, contenido, categoría, fuente, etc). **Requiere rol EDITOR.**")
@@ -86,13 +83,9 @@ public class NoticiaController {
 			@Parameter(description = "ID de la noticia a actualizar", required = true) @PathVariable Long id,
 			@Parameter(description = "Nuevos datos de la noticia", required = true) @RequestBody NoticiaDTO newData) {
 
-		int status = noticiaServ.updateById(id, newData);
+		noticiaServ.updateById(id, newData);
+		return new ResponseEntity<>("Noticia actualizada exitosamente", HttpStatus.OK);
 
-		if (status == 0) {
-			return new ResponseEntity<>("Noticia actualizada exitosamente", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Error: Noticia no encontrada", HttpStatus.NOT_FOUND);
-		}
 	}
 
 	@Operation(summary = "Eliminar noticia por ID", description = "Elimina permanentemente una noticia de la base de datos. **Requiere rol EDITOR.**")
@@ -103,12 +96,8 @@ public class NoticiaController {
 	public ResponseEntity<String> eliminarPorId(
 			@Parameter(description = "ID de la noticia a eliminar", required = true) @PathVariable Long id) {
 
-		int status = noticiaServ.deleteById(id);
+		noticiaServ.deleteById(id);
+		return new ResponseEntity<>("Noticia eliminada exitosamente", HttpStatus.OK);
 
-		if (status == 0) {
-			return new ResponseEntity<>("Noticia eliminada exitosamente", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Error: Noticia no encontrada", HttpStatus.NOT_FOUND);
-		}
 	}
 }

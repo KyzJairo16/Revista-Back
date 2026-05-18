@@ -14,6 +14,7 @@ import co.edu.unbosque.Revista.dto.ComentarioDTO;
 import co.edu.unbosque.Revista.entity.Comentario;
 
 import co.edu.unbosque.Revista.repository.ComentarioRepository;
+import co.edu.unbosque.Revista.util.LanzadorDeException;
 
 @Service
 public class ComentarioService implements CRUDOperation<ComentarioDTO> {
@@ -50,28 +51,25 @@ public class ComentarioService implements CRUDOperation<ComentarioDTO> {
 	@Override
 	public int deleteById(Long id) {
 		Optional<Comentario> encontrado = comentarioRepo.findById(id);
-		if (encontrado.isPresent()) {
-			comentarioRepo.delete(encontrado.get());
-			return 0;
-		} else {
-			return 1;
-		}
+
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Comentario");
+
+		comentarioRepo.delete(encontrado.get());
+		return 0;
 	}
 
 	@Override
 	public int updateById(Long id, ComentarioDTO newData) {
 		Optional<Comentario> existente = comentarioRepo.findById(id);
 
-		if (existente.isPresent()) {
-			Comentario temp = existente.get();
+		LanzadorDeException.verifyResourceFound(existente.isPresent(), "Comentario");
 
-			temp.setContenido(newData.getContenido());
-			temp.setFecha(LocalDateTime.now());
+		Comentario temp = existente.get();
+		temp.setContenido(newData.getContenido());
+		temp.setFecha(LocalDateTime.now());
 
-			comentarioRepo.save(temp);
-			return 0;
-		}
-		return 1;
+		comentarioRepo.save(temp);
+		return 0;
 	}
 
 	@Override
@@ -84,9 +82,16 @@ public class ComentarioService implements CRUDOperation<ComentarioDTO> {
 		return comentarioRepo.existsById(id);
 	}
 
+	public ComentarioDTO getById(Long id) {
+		Optional<Comentario> encontrado = comentarioRepo.findById(id);
+
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Comentario");
+
+		return modelMapper.map(encontrado.get(), ComentarioDTO.class);
+	}
 
 	public List<ComentarioDTO> getByPublicacion(Long publicacionId) {
-		
+
 		List<Comentario> entityList = comentarioRepo.findByPublicacionId(publicacionId);
 		List<ComentarioDTO> dtoList = new ArrayList<>();
 
@@ -97,7 +102,7 @@ public class ComentarioService implements CRUDOperation<ComentarioDTO> {
 	}
 
 	public List<ComentarioDTO> getByAutor(String username) {
-		List<Comentario> entityList= comentarioRepo.findByAutor(username);
+		List<Comentario> entityList = comentarioRepo.findByAutor(username);
 		List<ComentarioDTO> dtoList = new ArrayList<>();
 
 		for (Comentario comentario : entityList) {

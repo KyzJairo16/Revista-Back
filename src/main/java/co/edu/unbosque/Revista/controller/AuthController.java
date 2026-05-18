@@ -44,15 +44,15 @@ public class AuthController {
 	public ResponseEntity<?> login(
 			@Parameter(description = "Nombre de usuario y contraseña", required = true, schema = @Schema(implementation = UsuarioDTO.class)) @RequestBody UsuarioDTO loginRequest) {
 		try {
-			// 1. Validar las credenciales
+			
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-			// 2. Generar el Token
+			
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 			String jwt = jwtUtil.generateToken(userDetails);
 
-			// 3. Extraer el rol del usuario autenticado
+			
 			String role = null;
 			if (userDetails instanceof Usuario) {
 				role = ((Usuario) userDetails).getRol().name();
@@ -74,13 +74,12 @@ public class AuthController {
 	public ResponseEntity<String> register(
 			@Parameter(description = "Datos de registro", required = true, schema = @Schema(implementation = UsuarioDTO.class)) @RequestBody UsuarioDTO registerRequest) {
 
-		// 1. Verificar disponibilidad de username
+		
 		if (usuarioService.findUsernameAlreadyTaken(registerRequest.getUsername())) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: El nombre de usuario ya está en uso");
 		}
 
-		// 2. Crear usuario (el servicio se encarga de cifrar la clave y asignar rol
-		// USUARIO si viene nulo)
+		
 		int result = usuarioService.create(registerRequest);
 
 		if (result == 0) {
@@ -90,9 +89,7 @@ public class AuthController {
 		}
 	}
 
-	/**
-	 * Clase interna para la respuesta JSON del login
-	 */
+
 	private static class AuthResponse {
 		private final String token;
 		private final String rol;
