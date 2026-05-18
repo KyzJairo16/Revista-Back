@@ -1,6 +1,6 @@
 package co.edu.unbosque.Revista.exception;
 
-public class PasswordNotValidException extends Exception {
+public class PasswordNotValidException extends RuntimeException {
 
 	/**
 	 * 

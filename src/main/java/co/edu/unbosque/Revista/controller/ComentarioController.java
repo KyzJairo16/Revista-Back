@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200" })
 @Transactional
 @Tag(name = "Gestión de Comentarios", description = "Endpoints para la interacción y moderación de comentarios")
-@SecurityRequirement(name = "bearerAuth") // Exige el JWT en Swagger
+@SecurityRequirement(name = "bearerAuth")
 public class ComentarioController {
 
 	@Autowired
@@ -39,13 +39,8 @@ public class ComentarioController {
 	public ResponseEntity<String> crear(
 			@Parameter(description = "Datos del comentario", required = true, schema = @Schema(implementation = ComentarioDTO.class)) @RequestBody ComentarioDTO newComentario) {
 
-		int status = comentarioServ.create(newComentario);
-
-		if (status == 0) {
-			return new ResponseEntity<>("Comentario publicado exitosamente", HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<>("Error al publicar el comentario", HttpStatus.BAD_REQUEST);
-		}
+		comentarioServ.create(newComentario);
+		return new ResponseEntity<>("Comentario publicado exitosamente", HttpStatus.CREATED);
 	}
 
 	@Operation(summary = "Listar todos los comentarios", description = "Recupera todo el historial de comentarios del sistema. **Accesible para TODOS los roles.**")
@@ -57,6 +52,17 @@ public class ComentarioController {
 			return new ResponseEntity<>(comentarios, HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<>(comentarios, HttpStatus.OK);
+	}
+
+	@Operation(summary = "Obtener comentario por ID", description = "Busca los detalles de un comentario específico.")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Comentario encontrado"),
+			@ApiResponse(responseCode = "404", description = "Comentario no encontrado") })
+	@PreAuthorize("hasAnyRole('USUARIO', 'COMENTADOR', 'EDITOR', 'ADMINISTRATIVO')")
+	@GetMapping("/buscar/{id}")
+	public ResponseEntity<ComentarioDTO> buscarPorId(@PathVariable Long id) {
+
+		ComentarioDTO found = comentarioServ.getById(id);
+		return new ResponseEntity<>(found, HttpStatus.OK);
 	}
 
 	@Operation(summary = "Obtener comentarios de una publicación", description = "Filtra y devuelve todos los comentarios asociados a una Noticia u Horóscopo específico. **Accesible para TODOS los roles.**")
@@ -94,29 +100,19 @@ public class ComentarioController {
 			@Parameter(description = "ID del comentario a actualizar", required = true) @PathVariable Long id,
 			@Parameter(description = "Nuevos datos del comentario", required = true) @RequestBody ComentarioDTO newData) {
 
-		int status = comentarioServ.updateById(id, newData);
-
-		if (status == 0) {
-			return new ResponseEntity<>("Comentario actualizado exitosamente", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Error: Comentario no encontrado", HttpStatus.NOT_FOUND);
-		}
+		comentarioServ.updateById(id, newData);
+		return new ResponseEntity<>("Comentario editado exitosamente", HttpStatus.OK);
 	}
 
 	@Operation(summary = "Eliminar comentario (Moderación)", description = "Elimina permanentemente un comentario. Diseñado para moderación. **Requiere rol EDITOR.**")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Comentario eliminado exitosamente"),
 			@ApiResponse(responseCode = "404", description = "Comentario no encontrado") })
-	@PreAuthorize("hasRole('EDITOR')")
+	@PreAuthorize("hasAnyRole('EDITOR', 'ADMINISTRATIVO')")
 	@DeleteMapping("/eliminar/{id}")
 	public ResponseEntity<String> eliminarPorId(
 			@Parameter(description = "ID del comentario a eliminar", required = true) @PathVariable Long id) {
 
-		int status = comentarioServ.deleteById(id);
-
-		if (status == 0) {
-			return new ResponseEntity<>("Comentario eliminado exitosamente por moderación", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Error: Comentario no encontrado", HttpStatus.NOT_FOUND);
-		}
+		comentarioServ.deleteById(id);
+		return new ResponseEntity<>("Comentario eliminado exitosamente", HttpStatus.OK);
 	}
 }

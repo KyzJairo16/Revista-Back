@@ -3,6 +3,7 @@ package co.edu.unbosque.Revista.security;
 import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -26,33 +27,43 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
-	private final UserDetailsService userDetailsService; 
+	private final UserDetailsService userDetailsService;
 
 	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.userDetailsService = userDetailsService;
-    }
+		this.jwtAuthFilter = jwtAuthFilter;
+		this.userDetailsService = userDetailsService;
+	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-		
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.csrf(csrf -> csrf.disable())
-			.authorizeHttpRequests(auth -> auth
-				
-				.requestMatchers("/api/auth/**").permitAll()
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-				
-				.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**", "/api/usuarios/buscar/**")
-				.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
-				.requestMatchers("/api/usuarios/**").hasRole("EDITOR")
-				
-				.anyRequest().authenticated()
-			)
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authenticationProvider(authenticationProvider())
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+				.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+
+						.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+						.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**",
+								"/api/usuarios/buscar/**")
+						.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+						.requestMatchers("/api/usuarios/**").hasRole("ADMINISTRATIVO")
+
+						.requestMatchers("/api/comentarios/crear", "/api/comentarios/listar")
+						.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+						.requestMatchers("/api/comentarios/publicacion/*", "/api/comentarios/buscar/*")
+						.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+						.requestMatchers("/api/comentarios/actualizar/*", "/api/comentarios/eliminar/*")
+						.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+
+
+
+						.anyRequest().authenticated())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(authenticationProvider())
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -64,7 +75,7 @@ public class SecurityConfig {
 		authProvider.setPasswordEncoder(passwordEncoder());
 		return authProvider;
 	}
-	  
+
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
@@ -78,14 +89,14 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		
+
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-	
+
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-	
+
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
 		configuration.setAllowCredentials(true);
-		
+
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;

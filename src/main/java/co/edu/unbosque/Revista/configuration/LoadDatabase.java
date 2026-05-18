@@ -21,20 +21,31 @@ public class LoadDatabase {
 	CommandLineRunner initDatabase(UsuarioRepository usuarioRepo, PasswordEncoder passwordEncoder) {
 
 		return args -> {
-			
+
 			Optional<Usuario> foundAdmin = usuarioRepo.findByUsername("admin");
 			if (foundAdmin.isPresent()) {
-				log.info("El EDITOR 'admin' ya existe, omitiendo...");
+				log.info("El ADMINISTRATIVO 'admin' ya existe, omitiendo...");
 			} else {
 				Usuario admin = new Usuario();
 				admin.setUsername("admin");
 				admin.setPassword(passwordEncoder.encode("admin123"));
-				admin.setRol(Rol.EDITOR); 
+				admin.setRol(Rol.ADMINISTRATIVO);
 				usuarioRepo.save(admin);
 				log.info(">>> Precargando usuario EDITOR: admin / admin123");
 			}
 
-	
+			Optional<Usuario> foundEditor = usuarioRepo.findByUsername("editor");
+			if (foundEditor.isPresent()) {
+				log.info("El EDITOR 'editor' ya existe, omitiendo...");
+			} else {
+				Usuario editor = new Usuario();
+				editor.setUsername("editor");
+				editor.setPassword(passwordEncoder.encode("editor123"));
+				editor.setRol(Rol.EDITOR); 
+				usuarioRepo.save(editor);
+				log.info(">>> Precargando usuario EDITOR: editor / editor123");
+			}
+
 			Optional<Usuario> foundUser = usuarioRepo.findByUsername("jairo");
 			if (foundUser.isPresent()) {
 				log.info("El USUARIO 'jairo' ya existe, omitiendo...");
