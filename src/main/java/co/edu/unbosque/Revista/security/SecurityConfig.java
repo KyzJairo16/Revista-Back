@@ -36,7 +36,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-			
+		
 			.cors(cors -> cors.configurationSource(request -> {
 				CorsConfiguration config = new CorsConfiguration();
 				config.setAllowedOrigins(List.of("http://localhost:4200"));
@@ -45,21 +45,20 @@ public class SecurityConfig {
 				config.setAllowCredentials(true);
 				return config;
 			}))
-		
+
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
 			
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/api/usuarios/crear").permitAll() 
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-				.requestMatchers(HttpMethod.GET, "/api/publicaciones/**").hasAnyAuthority("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
-				.requestMatchers("/api/publicaciones/**").hasAnyAuthority("EDITOR", "ADMINISTRATIVO")
+				.requestMatchers(HttpMethod.GET, "/api/publicaciones/**").hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+				.requestMatchers("/api/publicaciones/**").hasAnyRole("EDITOR", "ADMINISTRATIVO")
 				.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**", "/api/usuarios/buscar/**")
-				.hasAnyAuthority("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
-				
-				.requestMatchers("/api/usuarios/**").hasAuthority("ADMINISTRATIVO")
+				.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+
+				.requestMatchers("/api/usuarios/**").hasRole("ADMINISTRATIVO")
 	
-			
 				.anyRequest().authenticated()
 			)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
