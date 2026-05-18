@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200" })
 @Transactional
 @Tag(name = "Gestión de Horóscopos", description = "Endpoints para administrar los horóscopos de la Revista digital")
-@SecurityRequirement(name = "bearerAuth") 
+@SecurityRequirement(name = "bearerAuth")
 public class HoroscopoController {
 
 	@Autowired
@@ -68,12 +68,8 @@ public class HoroscopoController {
 	@PreAuthorize("hasAnyRole('USUARIO', 'COMENTADOR', 'EDITOR', 'ADMINISTRATIVO')")
 	@GetMapping("/buscar/{id}")
 	public ResponseEntity<HoroscopoDTO> buscarPorId(@PathVariable Long id) {
-		// NOTA: Asegúrate de tener el método getById(Long id) en tu HoroscopoService
 		HoroscopoDTO found = horoscopoServ.getById(id);
-		if (found != null) {
-			return new ResponseEntity<>(found, HttpStatus.OK);
-		}
-		return new ResponseEntity<>(new HoroscopoDTO(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(found, HttpStatus.OK);
 	}
 
 	@Operation(summary = "Buscar horóscopos por signo zodiacal", description = "Filtra y devuelve todos los horóscopos pertenecientes a un signo específico (Ej. 'Aries'). **Accesible para TODOS los roles.**")
@@ -81,8 +77,7 @@ public class HoroscopoController {
 	@GetMapping("/signo/{signo}")
 	public ResponseEntity<List<HoroscopoDTO>> buscarPorSigno(
 			@Parameter(description = "Nombre del signo zodiacal", required = true, example = "Aries") @PathVariable String signo) {
-		// NOTA: Asegúrate de tener el método getBySigno(String signo) en tu
-		// HoroscopoService
+
 		List<HoroscopoDTO> filtrados = horoscopoServ.getBySigno(signo);
 		if (filtrados.isEmpty()) {
 			return new ResponseEntity<>(filtrados, HttpStatus.NO_CONTENT);
@@ -99,13 +94,8 @@ public class HoroscopoController {
 			@Parameter(description = "ID del horóscopo a actualizar", required = true) @PathVariable Long id,
 			@Parameter(description = "Nuevos datos", required = true) @RequestBody HoroscopoDTO newData) {
 
-		int status = horoscopoServ.updateById(id, newData);
-
-		if (status == 0) {
-			return new ResponseEntity<>("Horóscopo actualizado exitosamente", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Error: Horóscopo no encontrado", HttpStatus.NOT_FOUND);
-		}
+		horoscopoServ.updateById(id, newData);
+		return new ResponseEntity<>("Horóscopo actualizado exitosamente", HttpStatus.OK);
 	}
 
 	@Operation(summary = "Eliminar horóscopo por ID", description = "Elimina permanentemente un horóscopo de la base de datos. **Requiere rol EDITOR.**")
@@ -116,12 +106,7 @@ public class HoroscopoController {
 	public ResponseEntity<String> eliminarPorId(
 			@Parameter(description = "ID del horóscopo a eliminar", required = true) @PathVariable Long id) {
 
-		int status = horoscopoServ.deleteById(id);
-
-		if (status == 0) {
-			return new ResponseEntity<>("Horóscopo eliminado exitosamente", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Error: Horóscopo no encontrado", HttpStatus.NOT_FOUND);
-		}
+		horoscopoServ.deleteById(id);
+		return new ResponseEntity<>("Horóscopo eliminado exitosamente", HttpStatus.OK);
 	}
 }

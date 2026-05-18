@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import co.edu.unbosque.Revista.dto.UsuarioDTO;
 import co.edu.unbosque.Revista.entity.Usuario;
 import co.edu.unbosque.Revista.repository.UsuarioRepository;
+import co.edu.unbosque.Revista.util.LanzadorDeException;
 
 import org.modelmapper.ModelMapper;
 
@@ -32,20 +33,20 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 
 	@Override
 	public int create(UsuarioDTO data) {
+
+		LanzadorDeException.verifyPassword(data.getPassword());
+		boolean existe = findUsernameAlreadyTaken(data.getUsername());
+		LanzadorDeException.verifyUniqueUsername(existe, data.getUsername());
+
 		Usuario entity = modelMapper.map(data, Usuario.class);
+		entity.setPassword(passwordEncoder.encode(entity.getPassword()));
 
-		if (findUserAlreadyTaken(entity)) {
-			return 1;
-		} else {
-			entity.setPassword(passwordEncoder.encode(entity.getPassword()));
-
-			if (data.getRol() != null) {
-				entity.setRol(data.getRol());
-			}
-
-			usuarioRepo.save(entity);
-			return 0;
+		if (data.getRol() != null) {
+			entity.setRol(data.getRol());
 		}
+
+		usuarioRepo.save(entity);
+		return 0;
 	}
 
 	@Override
@@ -63,41 +64,29 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 	@Override
 	public int deleteById(Long id) {
 		Optional<Usuario> encontrado = usuarioRepo.findById(id);
-		if (encontrado.isPresent()) {
-			usuarioRepo.delete(encontrado.get());
-			return 0;
-		} else {
-			return 1;
-		}
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Usuario");
+		usuarioRepo.delete(encontrado.get());
+		return 0;
 	}
 
 	@Override
 	public int updateById(Long id, UsuarioDTO newData) {
+
 		Optional<Usuario> encontrado = usuarioRepo.findById(id);
-		Optional<Usuario> newEncontrado = usuarioRepo.findByUsername(newData.getUsername());
 
-		if (encontrado.isPresent() && !newEncontrado.isPresent()) {
-			Usuario temp = encontrado.get();
-			temp.setUsername(newData.getUsername());
-			temp.setPassword(passwordEncoder.encode(newData.getPassword()));
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Usuario");
 
-			if (newData.getRol() != null) {
-				temp.setRol(newData.getRol());
-			}
+		Usuario usuarioExistente = encontrado.get();
+		usuarioExistente.setUsername(newData.getUsername());
+		usuarioExistente.setRol(newData.getRol());
 
-			usuarioRepo.save(temp);
-			return 0;
+		if (newData.getPassword() != null && !newData.getPassword().isEmpty()) {
+			LanzadorDeException.verifyPassword(newData.getPassword());
+			usuarioExistente.setPassword(passwordEncoder.encode(newData.getPassword()));
 		}
 
-		if (encontrado.isPresent() && newEncontrado.isPresent()) {
-			return 1;
-		}
-
-		if (!encontrado.isPresent()) {
-			return 2;
-		} else {
-			return 3;
-		}
+		usuarioRepo.save(usuarioExistente);
+		return 0;
 	}
 
 	@Override
@@ -112,22 +101,17 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 
 	public int deleteByUsername(String username) {
 		Optional<Usuario> encontrado = usuarioRepo.findByUsername(username);
-		if (encontrado.isPresent()) {
-			usuarioRepo.delete(encontrado.get());
-			return 0;
-		} else {
-			return 1;
-		}
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Usuario: " + username);
+
+		usuarioRepo.delete(encontrado.get());
+		return 0;
 	}
 
 	public UsuarioDTO getById(Long id) {
 		Optional<Usuario> encontrado = usuarioRepo.findById(id);
-		if (encontrado.isPresent()) {
-			return modelMapper.map(encontrado.get(), UsuarioDTO.class);
-		} else {
-			return null;
-		}
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Usuario");
 
+		return modelMapper.map(encontrado.get(), UsuarioDTO.class);
 	}
 
 	public boolean findUserAlreadyTaken(Usuario newUsuario) {

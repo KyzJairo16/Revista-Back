@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import co.edu.unbosque.Revista.dto.NoticiaDTO;
 import co.edu.unbosque.Revista.entity.Noticia;
 import co.edu.unbosque.Revista.repository.NoticiaRepository;
+import co.edu.unbosque.Revista.util.LanzadorDeException;
 
 @Service
 public class NoticiaService implements CRUDOperation<NoticiaDTO> {
@@ -47,7 +48,7 @@ public class NoticiaService implements CRUDOperation<NoticiaDTO> {
 	@Override
 	public List<NoticiaDTO> getAll() {
 		List<Noticia> entityList = noticiaRepo.findAll();
-		List<NoticiaDTO> dtoList= new ArrayList<>();
+		List<NoticiaDTO> dtoList = new ArrayList<>();
 
 		entityList.forEach((entity) -> {
 			NoticiaDTO dto = modelMapper.map(entity, NoticiaDTO.class);
@@ -59,31 +60,29 @@ public class NoticiaService implements CRUDOperation<NoticiaDTO> {
 	@Override
 	public int deleteById(Long id) {
 		Optional<Noticia> encontrado = noticiaRepo.findById(id);
-		if (encontrado.isPresent()) {
-			noticiaRepo.delete(encontrado.get());
-			return 0;
-		} else {
-			return 1;
-		}
+
+		
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Noticia");
+
+		
+		noticiaRepo.delete(encontrado.get());
+		return 0;
 	}
 
 	@Override
 	public int updateById(Long id, NoticiaDTO newData) {
 		Optional<Noticia> encontrado = noticiaRepo.findById(id);
 
-		if (encontrado.isPresent()) {
-			Noticia noticiaExistente = encontrado.get();
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Noticia");
+		Noticia noticiaExistente = encontrado.get();
+		noticiaExistente.setTitulo(newData.getTitulo());
+		noticiaExistente.setContenido(newData.getContenido());
+		noticiaExistente.setCategoria(newData.getCategoria());
+		noticiaExistente.setFuente(newData.getFuente());
+		noticiaExistente.setImagenUrl(newData.getImagenUrl());
 
-			noticiaExistente.setTitulo(newData.getTitulo());
-			noticiaExistente.setContenido(newData.getContenido());
-			noticiaExistente.setCategoria(newData.getCategoria());
-			noticiaExistente.setFuente(newData.getFuente());
-			noticiaExistente.setImagenUrl(newData.getImagenUrl());
-
-			noticiaRepo.save(noticiaExistente);
-			return 0;
-		}
-		return 1;
+		noticiaRepo.save(noticiaExistente);
+		return 0;
 	}
 
 	@Override
@@ -98,11 +97,10 @@ public class NoticiaService implements CRUDOperation<NoticiaDTO> {
 
 	public NoticiaDTO getById(Long id) {
 		Optional<Noticia> encontrado = noticiaRepo.findById(id);
-		if (encontrado.isPresent()) {
-			return modelMapper.map(encontrado.get(), NoticiaDTO.class);
-		} else {
-			return null;
-		}
+
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Noticia");
+
+		return modelMapper.map(encontrado.get(), NoticiaDTO.class);
 	}
 
 	public List<NoticiaDTO> getByCategoria(String categoria) {

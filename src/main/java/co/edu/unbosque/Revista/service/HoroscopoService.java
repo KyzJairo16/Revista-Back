@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import co.edu.unbosque.Revista.dto.HoroscopoDTO;
 import co.edu.unbosque.Revista.entity.Horoscopo;
 import co.edu.unbosque.Revista.repository.HoroscopoRepository;
+import co.edu.unbosque.Revista.util.LanzadorDeException;
 
 @Service
 public class HoroscopoService implements CRUDOperation<HoroscopoDTO> {
@@ -46,43 +47,39 @@ public class HoroscopoService implements CRUDOperation<HoroscopoDTO> {
 
 	@Override
 	public List<HoroscopoDTO> getAll() {
-		List<Horoscopo> entityList = (List<Horoscopo>)horoscopoRepo.findAll();
+		List<Horoscopo> entityList = (List<Horoscopo>) horoscopoRepo.findAll();
 		List<HoroscopoDTO> dtoList = new ArrayList<>();
 
-		entityList.forEach(entity -> 
-			dtoList.add(modelMapper.map(entity, HoroscopoDTO.class)));
-		
+		entityList.forEach(entity -> dtoList.add(modelMapper.map(entity, HoroscopoDTO.class)));
+
 		return dtoList;
 	}
 
 	@Override
 	public int deleteById(Long id) {
 		Optional<Horoscopo> encontrado = horoscopoRepo.findById(id);
-		if (encontrado.isPresent()) {
-			horoscopoRepo.delete(encontrado.get());
-			return 0;
-		} else {
-			return 1;
-		}
 
+		
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Horoscope");
+
+		horoscopoRepo.delete(encontrado.get());
+		return 0;
 	}
 
 	@Override
 	public int updateById(Long id, HoroscopoDTO newData) {
 		Optional<Horoscopo> existente = horoscopoRepo.findById(id);
 
-		if (existente.isPresent()) {
-			Horoscopo temp = existente.get();
+		LanzadorDeException.verifyResourceFound(existente.isPresent(), "Horoscopo");
 
-			temp.setTitulo(newData.getTitulo());
-			temp.setContenido(newData.getContenido());
-			temp.setSignoZodiacal(newData.getSignoZodiacal());
-			temp.setPrediccion(newData.getPrediccion());
+		Horoscopo temp = existente.get();
+		temp.setTitulo(newData.getTitulo());
+		temp.setContenido(newData.getContenido());
+		temp.setSignoZodiacal(newData.getSignoZodiacal());
+		temp.setPrediccion(newData.getPrediccion());
 
-			horoscopoRepo.save(temp);
-			return 0;
-		}
-		return 1;
+		horoscopoRepo.save(temp);
+		return 0;
 	}
 
 	@Override
@@ -97,11 +94,10 @@ public class HoroscopoService implements CRUDOperation<HoroscopoDTO> {
 
 	public HoroscopoDTO getById(Long id) {
 		Optional<Horoscopo> encontrado = horoscopoRepo.findById(id);
-		if (encontrado.isPresent()) {
-			return modelMapper.map(encontrado.get(), HoroscopoDTO.class);
-		} else {
-			return null;
-		}
+
+		LanzadorDeException.verifyResourceFound(encontrado.isPresent(), "Horoscopo");
+
+		return modelMapper.map(encontrado.get(), HoroscopoDTO.class);
 	}
 
 	public List<HoroscopoDTO> getBySigno(String signo) {
