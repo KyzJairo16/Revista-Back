@@ -22,6 +22,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
@@ -56,13 +57,27 @@ public class SecurityConfig {
 				.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**", "/api/usuarios/buscar/**")
 				.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
 
-				.requestMatchers("/api/usuarios/**").hasRole("ADMINISTRATIVO")
-	
-				.anyRequest().authenticated()
-			)
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authenticationProvider(authenticationProvider())
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+						.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**",
+								"/api/usuarios/buscar/**")
+						.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+						.requestMatchers("/api/usuarios/**").hasRole("ADMINISTRATIVO")
+						
+						.requestMatchers("/api/noticias/listar", "/api/noticias/buscar/**", "/api/noticias/count").permitAll() 
+						.requestMatchers("/api/noticias/**").hasAnyRole("EDITOR", "ADMINISTRATIVO") 
+
+						
+						.requestMatchers("/api/horoscopos/listar", "/api/horoscopos/buscar/**", "/api/horoscopos/count").permitAll() 
+						.requestMatchers("/api/horoscopos/**").hasAnyRole("EDITOR", "ADMINISTRATIVO")
+
+						.requestMatchers("/api/comentarios/listar", "/api/comentarios/publicacion/**", "/api/comentarios/buscar/**").permitAll()
+						.requestMatchers("/api/comentarios/**").hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+
+						.anyRequest().authenticated())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(authenticationProvider())
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
