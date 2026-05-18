@@ -1,6 +1,5 @@
 package co.edu.unbosque.Revista.security;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,16 +15,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration; // Importación añadida para configurar CORS
+
+import java.util.List; // Importación añadida para manejar las listas de configuración
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	
 	private final JwtAuthenticationFilter jwtAuthFilter;
-
-	
 	private final UserDetailsService userDetailsService; 
 
 	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
@@ -35,18 +34,27 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
+		http
+			// 1. Configuración explícita de CORS integrada en la cadena de seguridad
+			.cors(cors -> cors.configurationSource(request -> {
+				CorsConfiguration config = new CorsConfiguration();
+				config.setAllowedOrigins(List.of("http://localhost:4200"));
+				config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+				config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));
+				config.setAllowCredentials(true);
+				return config;
+			}))
+			// 2. Deshabilitar CSRF (adecuado para arquitecturas REST basadas en JWT Stateless)
+			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
-				
+			
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 				
-				
 				.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**", "/api/usuarios/buscar/**")
-				.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
-				.requestMatchers("/api/usuarios/**").hasRole("EDITOR")
-				
-				
+				.hasAnyAuthority("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+				.requestMatchers("/api/usuarios/**").hasAuthority("ADMINISTRATIVO")
+	
 				.anyRequest().authenticated()
 			)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -56,14 +64,13 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	  @Bean
-	  public AuthenticationProvider authenticationProvider() {
-	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userDetailsService);
-	    authProvider.setPasswordEncoder(passwordEncoder());
-	    return authProvider;
-	   
-	  }
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
+	}
 	  
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
