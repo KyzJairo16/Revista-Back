@@ -3,7 +3,11 @@ package co.edu.unbosque.Revista.entity;
 import java.time.LocalDateTime;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,8 +22,8 @@ public abstract class Publicacion {
 
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
 	private String titulo;
-	private String contenido;
-	private LocalDateTime fechaPublicacion;
+	@Column(columnDefinition = "TEXT") private String contenido;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC") private LocalDateTime fechaPublicacion;
 	private String autor;
 
 	public Publicacion() {
