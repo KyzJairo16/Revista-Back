@@ -23,7 +23,7 @@ public abstract class Publicacion {
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
 	private String titulo;
 	@Column(columnDefinition = "TEXT") private String contenido;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC") private LocalDateTime fechaPublicacion;
+	private LocalDateTime fechaPublicacion;
 	private String autor;
 
 	public Publicacion() {
