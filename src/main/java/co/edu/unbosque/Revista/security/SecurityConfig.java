@@ -16,9 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration; // Importación añadida para configurar CORS
+import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.List; // Importación añadida para manejar las listas de configuración
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -36,20 +36,26 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-				
-				.cors(cors -> cors.configurationSource(request -> {
-					CorsConfiguration config = new CorsConfiguration();
-					config.setAllowedOrigins(List.of("http://localhost:4200"));
-					config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-					config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));
-					config.setAllowCredentials(true);
-					return config;
-				}))
-				
-				.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
+		
+			.cors(cors -> cors.configurationSource(request -> {
+				CorsConfiguration config = new CorsConfiguration();
+				config.setAllowedOrigins(List.of("http://localhost:4200"));
+				config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+				config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));
+				config.setAllowCredentials(true);
+				return config;
+			}))
 
-						.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+			.csrf(csrf -> csrf.disable())
+			.authorizeHttpRequests(auth -> auth
+			
+				.requestMatchers("/api/auth/**").permitAll()
+				.requestMatchers("/api/usuarios/crear").permitAll() 
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/publicaciones/**").hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
+				.requestMatchers("/api/publicaciones/**").hasAnyRole("EDITOR", "ADMINISTRATIVO")
+				.requestMatchers("/api/usuarios/listar", "/api/usuarios/count", "/api/usuarios/exists/**", "/api/usuarios/buscar/**")
+				.hasAnyRole("USUARIO", "COMENTADOR", "EDITOR", "ADMINISTRATIVO")
 
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
